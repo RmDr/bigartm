@@ -90,6 +90,9 @@ SCORES = (
         constants.ScoreType_BackgroundTokensRatio,
         messages.BackgroundTokensRatioScoreConfig,
         messages.BackgroundTokensRatioScore
+    ), (        constants.ScoreType_Divergence,
+        messages.DivergenceScoreConfig,
+        messages.DivergenceScore
     ),
 )
 

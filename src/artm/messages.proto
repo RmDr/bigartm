@@ -216,6 +216,7 @@ enum ScoreType {
   ScoreType_ClassPrecision = 8;
   ScoreType_PeakMemory = 9;
   ScoreType_BackgroundTokensRatio = 10;
+  ScoreType_Divergence = 11;
   ScoreType_Unknown = 9999;
 }
 
@@ -401,6 +402,28 @@ message BackgroundTokensRatioScore {
   optional float value = 1;
   repeated string token = 2;
 }
+
+// Represents a configuration of a divergence score
+message DivergenceScoreConfig {
+  enum Type {
+    UnigramDocumentModel = 0;
+    UnigramCollectionModel = 1;
+  }
+  optional Type model_type = 3 [default = UnigramDocumentModel];
+  optional string dictionary_name = 4;
+  repeated string class_id = 7;
+}
+
+// Represents a result of calculation of a perplexity score
+message DivergcenceScore {
+  optional double value = 1;
+  optional double raw = 2;
+  optional double normalizer = 3;
+  optional int64 zero_words = 4;
+}
+
+
+
 
 // Represents a topic model (or an operation on topic model)
 message TopicModel {

@@ -22,6 +22,7 @@ __all__ = [
     'TopicMassPhiScore',
     'ClassPrecisionScore',
     'BackgroundTokensRatioScore'
+    'DivergenceScore'
 ]
 
 
@@ -739,6 +740,89 @@ class BackgroundTokensRatioScore(BaseScore):
     @delta_threshold.setter
     def delta_threshold(self, delta_threshold):
         _reconfigure_field(self, delta_threshold, 'delta_threshold')
+
+    @model_name.setter
+    def model_name(self, model_name):
+        raise KeyError('No model_name parameter')
+
+    @topic_names.setter
+    def topic_names(self, topic_names):
+        raise KeyError('No topic_names parameter')
+
+class DivergenceScore(BaseScore):
+    _config_message = messages.DivergenceScoreConfig
+    _type = const.ScoreType_Divergence
+
+    def __init__(self, name=None, class_ids=None, topic_names=None, dictionary=None):
+        """
+        :param str name: the identifier of score, will be auto-generated if not specified
+        :param class_ids: class_id to score, means that tokens of all class_ids will be used
+        :type class_ids: list of str
+        :param dictionary: BigARTM collection dictionary, is strongly recommended to\
+                           be used for correct replacing of zero counters.
+        :type dictionary: str or reference to Dictionary object
+        """
+        BaseScore.__init__(self,
+                           name=name,
+                           class_id=None,
+                           topic_names=None,
+                           model_name=None)
+
+        self._class_ids = []
+        if class_ids is not None:
+            self._config.ClearField('class_id')
+            for class_id in class_ids:
+                self._config.class_id.append(class_id)
+                self._class_ids.append(class_id)
+
+        self._dictionary_name = ''
+        if dictionary is not None:
+            dictionary_name = dictionary if isinstance(dictionary, str) else dictionary.name
+            self._dictionary_name = dictionary_name
+            self._config.dictionary_name = dictionary_name
+            self._config.model_type = const.DivergenceScoreConfig_Type_UnigramCollectionModel
+        else:
+	    pass
+            self._config.model_type = const.DivergenceScoreConfig_Type_UnigramDocumentModel
+
+    @property
+    def dictionary(self):
+        return self._dictionary_name
+
+    @property
+    def class_ids(self):
+        return self._class_ids
+
+    @property
+    def class_id(self):
+        raise KeyError('No class_id parameter')
+
+    @property
+    def model_name(self):
+        raise KeyError('No model_name parameter')
+
+    @property
+    def topic_names(self):
+        raise KeyError('No topic_names parameter')
+
+    @dictionary.setter
+    def dictionary(self, dictionary):
+        if len(self._dictionary_name) == 0:
+            score_config = messages.DivergenceScoreConfig()
+            score_config.CopyFrom(self._config)
+            score_config.model_type = const.DivergenceScoreConfig_Type_UnigramCollectionModel
+            self._master.reconfigure_score(self._name, score_config)
+
+        dictionary_name = dictionary if isinstance(dictionary, str) else dictionary.name
+        _reconfigure_field(self, dictionary_name, 'dictionary_name')
+
+    @class_ids.setter
+    def class_ids(self, class_ids):
+        _reconfigure_field(self, class_ids, 'class_ids', 'class_id')
+
+    @class_id.setter
+    def class_id(self, class_id):
+        raise KeyError('No class_id parameter')
 
     @model_name.setter
     def model_name(self, model_name):

@@ -43,6 +43,7 @@
 #include "artm/score/topic_mass_phi.h"
 #include "artm/score/class_precision.h"
 #include "artm/score/background_tokens_ratio.h"
+#include "artm/score/divergence.h"
 
 #define CREATE_OR_RECONFIGURE_REGULARIZER(ConfigType, RegularizerType) {                      \
   ConfigType regularizer_config;                                                              \
@@ -352,6 +353,11 @@ std::shared_ptr<ScoreCalculatorInterface> Instance::CreateScoreCalculator(const 
 
     case artm::ScoreType_BackgroundTokensRatio: {
       score_calculator.reset(new ::artm::score::BackgroundTokensRatio(config));
+      break;
+    }
+
+    case artm::ScoreType_Divergence: {
+      score_calculator.reset(new ::artm::score::Divergence(config));
       break;
     }
 

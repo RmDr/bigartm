@@ -169,6 +169,8 @@ set(SRC_LIST
 	score/topic_mass_phi.h
 	score/background_tokens_ratio.cc
 	score/background_tokens_ratio.h
+	score/divergence.cc
+	score/divergence.h
 	utility/blas.cc
 	utility/blas.h
 	utility/ifstream_or_cin.h
